@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Us Game 💫</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --rose: #e8344a;
+    --blush: #f7b2bc;
+    --cream: #fdf6f0;
+    --chocolate: #1a0a0e;
+    --gold: #c9942a;
+    --card-bg: #fff5f7;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--chocolate);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Background hearts */
+  body::before {
+    content: '♥ ♡ ♥ ♡ ♥ ♡ ♥ ♡ ♥ ♡ ♥ ♡ ♥';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    font-size: 2rem;
+    color: rgba(232, 52, 74, 0.05);
+    letter-spacing: 2rem;
+    line-height: 5rem;
+    word-spacing: 1rem;
+    white-space: pre-wrap;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    width: min(480px, 95vw);
+    text-align: center;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; animation: fadeUp 0.5s ease both; }
+  .screen.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── HOME ── */
+  .home-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.6rem, 8vw, 3.8rem);
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: .4rem;
+  }
+  .home-title em { color: var(--blush); font-style: italic; }
+  .home-sub {
+    color: rgba(247,178,188,.6);
+    font-size: .95rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 2.8rem;
+  }
+
+  .mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .mode-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid rgba(232,52,74,0.3);
+    border-radius: 18px;
+    padding: 22px 14px;
+    cursor: pointer;
+    transition: all .25s ease;
+    color: var(--cream);
+    text-align: center;
+  }
+  .mode-btn:hover, .mode-btn:active {
+    background: rgba(232,52,74,0.15);
+    border-color: var(--rose);
+    transform: translateY(-3px);
+  }
+  .mode-btn .icon { font-size: 2rem; margin-bottom: 8px; }
+  .mode-btn .label {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    display: block;
+  }
+  .mode-btn .desc {
+    font-size: .75rem;
+    color: rgba(247,178,188,.6);
+    margin-top: 4px;
+  }
+
+  /* full-width mode */
+  .mode-btn.wide { grid-column: 1 / -1; }
+
+  /* ── PLAYER SELECT ── */
+  .player-prompt {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--cream);
+    margin-bottom: 1.6rem;
+  }
+  .player-prompt span { color: var(--blush); }
+  .player-btns { display: flex; gap: 14px; justify-content: center; }
+  .player-card {
+    flex: 1;
+    max-width: 180px;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(232,52,74,0.3);
+    border-radius: 20px;
+    padding: 28px 16px;
+    cursor: pointer;
+    color: var(--cream);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    transition: all .25s;
+  }
+  .player-card .big { font-size: 2.4rem; margin-bottom: 8px; }
+  .player-card:hover { background: rgba(232,52,74,0.2); border-color: var(--rose); transform: scale(1.04); }
+
+  /* ── CARD ── */
+  .mode-label {
+    font-size: .75rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--blush);
+    margin-bottom: 1rem;
+    opacity: .7;
+  }
+  .whose-turn {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: rgba(247,178,188,.7);
+    margin-bottom: 1.6rem;
+  }
+  .card-wrap {
+    perspective: 1000px;
+    margin-bottom: 1.8rem;
+  }
+  .card {
+    background: var(--card-bg);
+    border-radius: 26px;
+    padding: 38px 28px;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(232,52,74,0.15);
+    transition: transform .15s;
+    cursor: default;
+  }
+  .card.flip-in { animation: flipIn .4s ease both; }
+  @keyframes flipIn {
+    from { opacity: 0; transform: rotateY(-25deg) scale(.95); }
+    to   { opacity: 1; transform: rotateY(0) scale(1); }
+  }
+
+  .card-type-badge {
+    position: absolute;
+    top: 16px; left: 50%;
+    transform: translateX(-50%);
+    font-size: .7rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+  .badge-truth  { background: #e8f0ff; color: #3b5bdb; }
+  .badge-dare   { background: #fff0e6; color: #d9480f; }
+  .badge-rather { background: #f0fff4; color: #2b8a3e; }
+  .badge-hot    { background: #fff0f3; color: var(--rose); }
+
+  .card-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.05rem, 3.5vw, 1.35rem);
+    color: var(--chocolate);
+    line-height: 1.55;
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  /* Would You Rather special layout */
+  .rather-layout { flex-direction: column; gap: 12px; margin-top: 30px; width: 100%; }
+  .rather-option {
+    background: white;
+    border: 2px solid #f0d0d5;
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--chocolate);
+    cursor: pointer;
+    transition: all .2s;
+    text-align: left;
+  }
+  .rather-option:hover { border-color: var(--rose); background: #fff0f3; }
+  .rather-option.chosen { border-color: var(--rose); background: #fff0f3; font-weight: 700; }
+  .rather-or {
+    font-size: .75rem;
+    letter-spacing: .15em;
+    color: rgba(26,10,14,.4);
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* ── BUTTONS ── */
+  .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem;
+    font-weight: 500;
+    transition: all .2s;
+    letter-spacing: .02em;
+  }
+  .btn-primary {
+    background: var(--rose);
+    color: white;
+    box-shadow: 0 4px 20px rgba(232,52,74,.4);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,52,74,.5); }
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid rgba(247,178,188,.4);
+    color: var(--blush);
+  }
+  .btn-outline:hover { border-color: var(--blush); background: rgba(247,178,188,.08); }
+
+  .score-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+    background: rgba(255,255,255,0.04);
+    border-radius: 14px;
+    padding: 10px 18px;
+  }
+  .score-item { color: var(--cream); font-size: .85rem; }
+  .score-item strong { color: var(--blush); }
+
+  .back-btn {
+    color: rgba(247,178,188,.5);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: .8rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-top: 1.4rem;
+    font-family: 'DM Sans', sans-serif;
+    transition: color .2s;
+  }
+  .back-btn:hover { color: var(--blush); }
+
+  /* ── RESULT ── */
+  .result-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: var(--cream);
+    margin-bottom: .6rem;
+  }
+  .result-title span { color: var(--blush); }
+  .result-sub { color: rgba(247,178,188,.6); font-size: .9rem; margin-bottom: 2rem; }
+  .winner-box {
+    background: rgba(232,52,74,.15);
+    border: 2px solid rgba(232,52,74,.4);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 1.8rem;
+  }
+  .winner-box .big { font-size: 3rem; }
+  .winner-box .name { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--cream); margin-top: 8px; }
+  .winner-box .wins { color: var(--blush); font-size: .85rem; }
+
+  /* floating hearts animation */
+  .heart-float {
+    position: fixed;
+    pointer-events: none;
+    font-size: 1.5rem;
+    animation: floatHeart 2.5s ease-out forwards;
+    z-index: 999;
+  }
+  @keyframes floatHeart {
+    0%   { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-120px) scale(1.5); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="home-title">Us<em>,</em><br>Tonight 💋</div>
+    <p class="home-sub">A couples game</p>
+    <div class="mode-grid">
+      <div class="mode-btn" onclick="startMode('truth-dare')">
+        <div class="icon">🎭</div>
+        <span class="label">Truth or Dare</span>
+        <span class="desc">Spill it or do it</span>
+      </div>
+      <div class="mode-btn" onclick="startMode('would-rather')">
+        <div class="icon">⚖️</div>
+        <span class="label">Would You Rather</span>
+        <span class="desc">Pick your poison</span>
+      </div>
+      <div class="mode-btn" onclick="startMode('hot-questions')">
+        <div class="icon">🔥</div>
+        <span class="label">Hot Questions</span>
+        <span class="desc">Deep & spicy</span>
+      </div>
+      <div class="mode-btn" onclick="startMode('couple-quiz')">
+        <div class="icon">🧠</div>
+        <span class="label">Couple Quiz</span>
+        <span class="desc">How well do you know each other?</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLAYER SELECT -->
+  <div class="screen" id="screen-players">
+    <p class="whose-turn" style="margin-bottom:.5rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;">Who goes first?</p>
+    <p class="player-prompt">Pick a <span>player</span></p>
+    <div class="player-btns">
+      <div class="player-card" onclick="setPlayer('Him')">
+        <div class="big">👨🏾</div>
+        Him
+      </div>
+      <div class="player-card" onclick="setPlayer('Her')">
+        <div class="big">👩🏾</div>
+        Her
+      </div>
+    </div>
+    <button class="back-btn" onclick="goHome()">← Back</button>
+  </div>
+
+  <!-- GAME CARD -->
+  <div class="screen" id="screen-card">
+    <div class="score-bar">
+      <div class="score-item">Him <strong id="score-him">0</strong> pts</div>
+      <div class="score-item" id="card-count-label">Card 1</div>
+      <div class="score-item">Her <strong id="score-her">0</strong> pts</div>
+    </div>
+
+    <div class="mode-label" id="mode-label">Truth or Dare</div>
+    <div class="whose-turn" id="whose-turn">Him's turn</div>
+
+    <div class="card-wrap">
+      <div class="card" id="game-card">
+        <span class="card-type-badge" id="card-badge">Truth</span>
+        <div id="card-content" class="card-text">Ready to play?</div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="nextCard()">Next Card 🎲</button>
+      <button class="btn btn-outline" onclick="givePoint()">+1 Point ❤️</button>
+    </div>
+    <button class="back-btn" onclick="goHome()">← Change Mode</button>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="screen-result">
+    <div class="result-title">Game <span>Over</span> 🎉</div>
+    <p class="result-sub">Here's how you did</p>
+    <div class="winner-box" id="winner-box">
+      <div class="big">🏆</div>
+      <div class="name" id="winner-name">It's a Tie!</div>
+      <div class="wins" id="winner-score"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="playAgain()">Play Again 💫</button>
+      <button class="btn btn-outline" onclick="goHome()">Change Mode</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────
+const data = {
+  'truth-dare': {
+    label: 'Truth or Dare',
+    cards: [
+      { type: 'truth', text: 'What\'s the first thing you noticed about me?' },
+      { type: 'dare',  text: 'Give your partner a 60-second massage.' },
+      { type: 'truth', text: 'What\'s something I do that secretly makes you smile?' },
+      { type: 'dare',  text: 'Serenade your partner with any song for 30 seconds.' },
+      { type: 'truth', text: 'What\'s one thing you wish we did more of together?' },
+      { type: 'dare',  text: 'Let your partner go through your camera roll for 1 minute.' },
+      { type: 'truth', text: 'What\'s a habit of mine that drives you a little crazy?' },
+      { type: 'dare',  text: 'Text your partner something sweet right now — from the heart.' },
+      { type: 'truth', text: 'Where do you see us in 5 years?' },
+      { type: 'dare',  text: 'Do your best impression of your partner.' },
+      { type: 'truth', text: 'What\'s the most attractive thing about my personality?' },
+      { type: 'dare',  text: 'Whisper something you love about your partner in their ear.' },
+      { type: 'truth', text: 'Have you ever had a dream about me? What happened?' },
+      { type: 'dare',  text: 'Cook or order your partner\'s favourite meal this week.' },
+      { type: 'truth', text: 'What\'s a memory with me that you replay often?' },
+      { type: 'dare',  text: 'Show your partner your most embarrassing photo on your phone.' },
+    ]
+  },
+  'would-rather': {
+    label: 'Would You Rather',
+    cards: [
+      { a: 'Never fight again but never fully make up', b: 'Fight more but always deeply reconcile' },
+      { a: 'Know exactly what your partner is thinking', b: 'Keep the mystery forever' },
+      { a: 'Travel the world together with no money', b: 'Be rich but never leave your city' },
+      { a: 'Have your partner forget your anniversary every year', b: 'Forget theirs every year' },
+      { a: 'Date someone funnier than your current partner', b: 'Date someone richer' },
+      { a: 'Be stuck in a lift with your partner for 6 hours', b: 'Be stuck in traffic for 6 hours' },
+      { a: 'Know the exact date of your first heartbreak', b: 'Never know when it\'s coming' },
+      { a: 'Your partner sees all your texts', b: 'You see all theirs' },
+      { a: 'Grow old looking the same', b: 'Stay young-looking forever but age in health' },
+      { a: 'Have a relationship with no secrets', b: 'Have complete privacy' },
+    ]
+  },
+  'hot-questions': {
+    label: 'Hot Questions 🔥',
+    cards: [
+      { type: 'hot', text: 'What\'s something you\'ve never told me but want to?' },
+      { type: 'hot', text: 'What moment made you feel most loved by me?' },
+      { type: 'hot', text: 'What\'s one thing you want more of in this relationship?' },
+      { type: 'hot', text: 'Is there something I did that hurt you and you never said?' },
+      { type: 'hot', text: 'What\'s your love language and do I speak it well?' },
+      { type: 'hot', text: 'What\'s one boundary you wish we talked about more openly?' },
+      { type: 'hot', text: 'What does a perfect day with me look like?' },
+      { type: 'hot', text: 'Do you think we communicate well? What could be better?' },
+      { type: 'hot', text: 'What\'s the most romantic thing you\'ve imagined us doing?' },
+      { type: 'hot', text: 'What\'s one thing you admire about how I love you?' },
+      { type: 'hot', text: 'If you could change one thing about our relationship, what would it be?' },
+      { type: 'hot', text: 'What\'s something small I do that means the most to you?' },
+    ]
+  },
+  'couple-quiz': {
+    label: 'Couple Quiz 🧠',
+    cards: [
+      { type: 'quiz', text: 'What is my favourite thing to eat on a Sunday?' },
+      { type: 'quiz', text: 'What song do I always sing in the shower?' },
+      { type: 'quiz', text: 'What\'s my biggest fear?' },
+      { type: 'quiz', text: 'What movie could I watch over and over?' },
+      { type: 'quiz', text: 'What do I do when I\'m stressed?' },
+      { type: 'quiz', text: 'What\'s something on my bucket list?' },
+      { type: 'quiz', text: 'What was I doing the day we met?' },
+      { type: 'quiz', text: 'What\'s my favourite way to be shown love?' },
+      { type: 'quiz', text: 'What childhood memory do I bring up most often?' },
+      { type: 'quiz', text: 'What\'s one thing I\'m secretly proud of?' },
+      { type: 'quiz', text: 'If I won a million naira tomorrow, what\'s the first thing I\'d buy?' },
+      { type: 'quiz', text: 'What habit am I always trying to build?' },
+    ]
+  }
+};
+
+// ── STATE ─────────────────────────────────────────────────────────
+let currentMode = '';
+let currentPlayer = 'Him';
+let cardIndex = 0;
+let scores = { Him: 0, Her: 0 };
+let shuffled = [];
+const MAX_CARDS = 10;
+
+// ── NAV ───────────────────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.remove('active');
+  void el.offsetWidth;
+  el.classList.add('active');
+}
+
+function goHome() { show('screen-home'); }
+
+function startMode(mode) {
+  currentMode = mode;
+  scores = { Him: 0, Her: 0 };
+  cardIndex = 0;
+  shuffled = shuffle([...data[mode].cards]);
+  if (mode === 'hot-questions') {
+    currentPlayer = 'Him';
+    loadCard();
+    show('screen-card');
+  } else {
+    show('screen-players');
+  }
+}
+
+function setPlayer(p) {
+  currentPlayer = p;
+  loadCard();
+  show('screen-card');
+}
+
+// ── GAME ──────────────────────────────────────────────────────────
+function loadCard() {
+  const modeData = data[currentMode];
+  document.getElementById('mode-label').textContent = modeData.label;
+  document.getElementById('whose-turn').textContent =
+    currentMode === 'hot-questions' ? 'Both answer honestly' : `${currentPlayer}'s turn`;
+  document.getElementById('score-him').textContent = scores.Him;
+  document.getElementById('score-her').textContent = scores.Her;
+  document.getElementById('card-count-label').textContent = `Card ${cardIndex + 1} / ${Math.min(shuffled.length, MAX_CARDS)}`;
+
+  const card = shuffled[cardIndex % shuffled.length];
+  const badge = document.getElementById('card-badge');
+  const content = document.getElementById('card-content');
+  const gameCard = document.getElementById('game-card');
+
+  // animate
+  gameCard.classList.remove('flip-in');
+  void gameCard.offsetWidth;
+  gameCard.classList.add('flip-in');
+
+  if (currentMode === 'would-rather') {
+    badge.textContent = 'Would You Rather';
+    badge.className = 'card-type-badge badge-rather';
+    content.innerHTML = `
+      <div class="rather-layout">
+        <div class="rather-option" onclick="chooseRather(this)">${card.a}</div>
+        <div class="rather-or">— or —</div>
+        <div class="rather-option" onclick="chooseRather(this)">${card.b}</div>
+      </div>`;
+  } else {
+    const typeMap = {
+      truth: ['badge-truth', 'Truth'],
+      dare:  ['badge-dare', 'Dare'],
+      hot:   ['badge-hot', '🔥 Hot'],
+      quiz:  ['badge-rather', '🧠 Quiz'],
+    };
+    const [cls, label] = typeMap[card.type] || ['badge-hot', '?'];
+    badge.className = `card-type-badge ${cls}`;
+    badge.textContent = label;
+    content.innerHTML = '';
+    content.textContent = card.text;
+  }
+}
+
+function chooseRather(el) {
+  document.querySelectorAll('.rather-option').forEach(o => o.classList.remove('chosen'));
+  el.classList.add('chosen');
+}
+
+function nextCard() {
+  cardIndex++;
+  if (cardIndex >= Math.min(shuffled.length, MAX_CARDS)) {
+    showResult();
+    return;
+  }
+  // alternate players
+  if (currentMode !== 'hot-questions') {
+    currentPlayer = currentPlayer === 'Him' ? 'Her' : 'Him';
+  }
+  loadCard();
+}
+
+function givePoint() {
+  scores[currentPlayer]++;
+  spawnHeart();
+  document.getElementById(`score-${currentPlayer.toLowerCase()}`).textContent = scores[currentPlayer];
+}
+
+function showResult() {
+  const h = scores.Him, r = scores.Her;
+  let name, score;
+  if (h > r) { name = '👨🏾 Him'; score = `${h} – ${r}`; }
+  else if (r > h) { name = '👩🏾 Her'; score = `${r} – ${h}`; }
+  else { name = '💞 It\'s a Tie!'; score = `${h} – ${r}`; }
+  document.getElementById('winner-name').textContent = name;
+  document.getElementById('winner-score').textContent = score + ' points';
+  show('screen-result');
+}
+
+function playAgain() { startMode(currentMode); }
+
+// ── UTILS ─────────────────────────────────────────────────────────
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function spawnHeart() {
+  const h = document.createElement('div');
+  h.className = 'heart-float';
+  h.textContent = ['❤️','💕','💖','💗','💓'][Math.floor(Math.random()*5)];
+  h.style.left = Math.random() * 80 + 10 + 'vw';
+  h.style.bottom = '80px';
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 2500);
+}
+</script>
+</body>
+</html>

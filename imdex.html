@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Us, Tonight 💋</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --rose: #e8344a;
+  --blush: #f7b2bc;
+  --deep: #120608;
+  --card: #fdf4f5;
+  --gold: #c9942a;
+  --muted: rgba(247,178,188,0.55);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--deep);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Ambient glow */
+body::after {
+  content: '';
+  position: fixed;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(232,52,74,0.12) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap {
+  position: relative; z-index: 1;
+  width: min(460px, 95vw);
+  text-align: center;
+  padding: 1rem 0 2rem;
+}
+
+/* ── SCREENS ── */
+.screen { display: none; }
+.screen.active {
+  display: block;
+  animation: rise 0.45s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── LOGO ── */
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.8rem, 9vw, 4rem);
+  color: #fff;
+  line-height: 1;
+  margin-bottom: .3rem;
+}
+.logo em { color: var(--blush); font-style: italic; }
+.tagline {
+  font-size: .72rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2.4rem;
+}
+
+/* ── ROOM CREATE / JOIN ── */
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 1.2rem;
+  font-style: italic;
+}
+
+.pill-group {
+  display: flex;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(232,52,74,0.2);
+  border-radius: 100px;
+  padding: 4px;
+  margin-bottom: 1.6rem;
+  gap: 4px;
+}
+.pill-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .85rem;
+  font-weight: 500;
+  background: transparent;
+  color: var(--muted);
+  transition: all .2s;
+}
+.pill-btn.active { background: var(--rose); color: #fff; }
+
+.input-field {
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(232,52,74,0.25);
+  border-radius: 14px;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color .2s;
+  text-align: center;
+  letter-spacing: .05em;
+}
+.input-field::placeholder { color: rgba(255,255,255,0.25); }
+.input-field:focus { border-color: var(--rose); }
+
+.room-code-display {
+  background: rgba(232,52,74,0.12);
+  border: 2px dashed rgba(232,52,74,0.4);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.room-code-label { font-size: .7rem; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.room-code-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  font-weight: 600;
+  color: var(--blush);
+  letter-spacing: .3em;
+}
+.room-code-hint { font-size: .78rem; color: var(--muted); margin-top: 6px; }
+
+/* ── WAITING ── */
+.waiting-blob {
+  width: 90px; height: 90px;
+  margin: 0 auto 1.2rem;
+  background: radial-gradient(circle, rgba(232,52,74,0.3), transparent 70%);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3rem;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: .9; }
+  50%       { transform: scale(1.12); opacity: 1; }
+}
+.waiting-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.7rem;
+  color: #fff;
+  margin-bottom: .5rem;
+  font-style: italic;
+}
+.waiting-sub { color: var(--muted); font-size: .88rem; margin-bottom: 1.8rem; }
+.dots span {
+  display: inline-block;
+  animation: blink 1.2s infinite;
+  color: var(--blush);
+}
+.dots span:nth-child(2) { animation-delay: .2s; }
+.dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%,80%,100%{opacity:0} 40%{opacity:1} }
+
+/* ── MODE SELECT ── */
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.mode-card {
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(232,52,74,0.2);
+  border-radius: 18px;
+  padding: 18px 12px;
+  cursor: pointer;
+  transition: all .22s;
+  color: #fff;
+}
+.mode-card:hover, .mode-card.selected {
+  background: rgba(232,52,74,0.15);
+  border-color: var(--rose);
+  transform: translateY(-2px);
+}
+.mode-card .icon { font-size: 1.8rem; margin-bottom: 6px; }
+.mode-card .name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  display: block;
+}
+.mode-card .hint { font-size: .7rem; color: var(--muted); margin-top: 3px; }
+.host-note { font-size: .75rem; color: var(--muted); margin-bottom: 1rem; }
+
+/* ── GAME ── */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.04);
+  border-radius: 14px;
+  padding: 10px 16px;
+  margin-bottom: 1rem;
+}
+.player-score { color: #fff; font-size: .85rem; line-height: 1.3; }
+.player-score .pts { color: var(--blush); font-weight: 600; font-size: 1.1rem; }
+.player-score .name { font-size: .7rem; color: var(--muted); }
+.turn-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--rose);
+  display: inline-block;
+  margin-right: 4px;
+  animation: pulse 1s infinite;
+}
+.card-num { font-size: .72rem; color: var(--muted); letter-spacing: .08em; }
+
+.card-wrap { perspective: 1000px; margin-bottom: 1.4rem; }
+.game-card {
+  background: var(--card);
+  border-radius: 24px;
+  padding: 36px 24px 28px;
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 24px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(232,52,74,0.1);
+  position: relative;
+}
+.game-card.animate {
+  animation: cardFlip .4s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes cardFlip {
+  from { opacity: 0; transform: scale(.93) rotateX(-12deg); }
+  to   { opacity: 1; transform: scale(1) rotateX(0); }
+}
+
+.badge {
+  position: absolute;
+  top: 14px; left: 50%;
+  transform: translateX(-50%);
+  font-size: .65rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 100px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.badge-truth  { background: #e8f0ff; color: #3b5bdb; }
+.badge-dare   { background: #fff0e6; color: #d9480f; }
+.badge-hot    { background: #fff0f3; color: var(--rose); }
+.badge-quiz   { background: #f0fff4; color: #2b8a3e; }
+.badge-rather { background: #f8f0ff; color: #7c3aed; }
+
+.card-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.1rem, 3.8vw, 1.4rem);
+  color: #1a0810;
+  line-height: 1.55;
+  margin-top: 28px;
+  text-align: center;
+}
+
+/* Would You Rather */
+.rather-wrap { margin-top: 28px; width: 100%; display: flex; flex-direction: column; gap: 8px; }
+.rather-opt {
+  background: #fff;
+  border: 2px solid #f0d0d5;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: #1a0810;
+  cursor: pointer;
+  transition: all .2s;
+  text-align: left;
+}
+.rather-opt:hover { border-color: var(--rose); background: #fff5f7; }
+.rather-opt.picked { border-color: var(--rose); background: #fff0f3; font-weight: 600; }
+.rather-or { font-size: .7rem; text-align: center; color: rgba(26,8,16,.35); letter-spacing: .1em; text-transform: uppercase; }
+
+/* Turn indicator */
+.turn-banner {
+  background: rgba(232,52,74,0.1);
+  border: 1px solid rgba(232,52,74,0.3);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: .82rem;
+  color: var(--blush);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.your-turn-glow { color: #fff; background: rgba(232,52,74,0.25); }
+
+/* Observer notice */
+.observer-notice {
+  font-size: .78rem;
+  color: var(--muted);
+  margin-bottom: .8rem;
+  font-style: italic;
+}
+
+/* ── BUTTONS ── */
+.btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  padding: 13px 26px;
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .88rem;
+  font-weight: 500;
+  transition: all .2s;
+  letter-spacing: .02em;
+}
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+.btn-primary {
+  background: var(--rose);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(232,52,74,.4);
+}
+.btn-primary:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,52,74,.5); }
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid rgba(247,178,188,.35);
+  color: var(--blush);
+}
+.btn-outline:not(:disabled):hover { border-color: var(--blush); background: rgba(247,178,188,.08); }
+.btn-ghost {
+  background: none; border: none;
+  color: var(--muted); font-size: .78rem;
+  letter-spacing: .08em; text-transform: uppercase;
+  cursor: pointer; margin-top: 1.2rem;
+  font-family: 'DM Sans', sans-serif;
+  transition: color .2s;
+}
+.btn-ghost:hover { color: var(--blush); }
+
+/* ── RESULT ── */
+.result-crown { font-size: 4rem; margin-bottom: .5rem; }
+.result-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4rem;
+  color: #fff;
+  margin-bottom: .4rem;
+  line-height: 1.1;
+}
+.result-score { color: var(--muted); margin-bottom: 1.8rem; font-size: .9rem; }
+.result-card {
+  background: rgba(232,52,74,.1);
+  border: 2px solid rgba(232,52,74,.3);
+  border-radius: 20px;
+  padding: 22px;
+  margin-bottom: 1.6rem;
+}
+.result-card .winner-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  color: #fff;
+  margin-top: 8px;
+}
+.result-card .pts-label { color: var(--blush); font-size: .82rem; }
+
+/* ── ANSWER SYSTEM ── */
+.answer-section {
+  margin-bottom: 1rem;
+}
+.answer-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(232,52,74,0.28);
+  border-radius: 14px;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .95rem;
+  outline: none;
+  resize: none;
+  transition: border-color .2s;
+  margin-bottom: 8px;
+  min-height: 60px;
+}
+.answer-input::placeholder { color: rgba(255,255,255,0.22); }
+.answer-input:focus { border-color: var(--rose); }
+.answer-input:disabled { opacity: .45; cursor: not-allowed; }
+
+.submit-answer-btn {
+  padding: 10px 22px;
+  background: rgba(232,52,74,0.2);
+  border: 1.5px solid rgba(232,52,74,0.5);
+  border-radius: 100px;
+  color: var(--blush);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .82rem;
+  cursor: pointer;
+  transition: all .2s;
+  margin-bottom: 4px;
+}
+.submit-answer-btn:hover:not(:disabled) { background: rgba(232,52,74,0.35); }
+.submit-answer-btn:disabled { opacity: .35; cursor: not-allowed; }
+.submit-answer-btn.submitted { background: rgba(50,200,100,0.15); border-color: rgba(50,200,100,0.5); color: #6ee7b7; }
+
+.answer-status {
+  font-size: .75rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+  min-height: 18px;
+  font-style: italic;
+}
+
+/* Reveal box */
+.reveal-box {
+  background: var(--card);
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,.4);
+}
+.reveal-row {
+  padding: 14px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border-bottom: 1px solid rgba(232,52,74,0.1);
+  text-align: left;
+}
+.reveal-row:last-child { border-bottom: none; }
+.reveal-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(232,52,74,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.reveal-name { font-size: .7rem; color: rgba(26,8,16,.5); margin-bottom: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.reveal-answer { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: #1a0810; line-height: 1.4; }
+.reveal-pending { font-style: italic; color: rgba(26,8,16,.35); font-size: .9rem; }
+
+/* Waiting for reveal */
+.both-answered-notice {
+  background: rgba(110,231,183,0.1);
+  border: 1px solid rgba(110,231,183,0.3);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: .8rem;
+  color: #6ee7b7;
+  margin-bottom: .8rem;
+}
+
+/* ── HEARTS ── */
+.heart {
+  position: fixed;
+  pointer-events: none;
+  font-size: 1.4rem;
+  animation: floatUp 2.2s ease-out forwards;
+  z-index: 999;
+}
+@keyframes floatUp {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(-110px) scale(1.6); }
+}
+
+/* error */
+.error-msg {
+  color: #ff6b6b;
+  font-size: .82rem;
+  margin-bottom: 10px;
+  min-height: 20px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ① LOBBY -->
+  <div class="screen active" id="s-lobby">
+    <div class="logo">Us<em>,</em> Tonight 💋</div>
+    <p class="tagline">A couples game · play apart, feel close</p>
+
+    <div class="pill-group">
+      <button class="pill-btn active" id="tab-create" onclick="switchTab('create')">Create Room</button>
+      <button class="pill-btn" id="tab-join" onclick="switchTab('join')">Join Room</button>
+    </div>
+
+    <!-- CREATE -->
+    <div id="panel-create">
+      <div class="room-code-display">
+        <div class="room-code-label">Your Room Code</div>
+        <div class="room-code-val" id="my-code">—</div>
+        <div class="room-code-hint">Share this code with bae 💌</div>
+      </div>
+      <input class="input-field" id="name-create" placeholder="Your name (e.g. Him)" maxlength="12">
+      <div class="error-msg" id="err-create"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="createRoom()">Create & Wait 💫</button>
+      </div>
+    </div>
+
+    <!-- JOIN -->
+    <div id="panel-join" style="display:none">
+      <input class="input-field" id="code-join" placeholder="Enter room code" maxlength="4" style="font-size:1.6rem;letter-spacing:.3em;text-transform:uppercase">
+      <input class="input-field" id="name-join" placeholder="Your name (e.g. Her)" maxlength="12">
+      <div class="error-msg" id="err-join"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="joinRoom()">Join Room 💋</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② WAITING (host) -->
+  <div class="screen" id="s-waiting">
+    <div class="waiting-blob">💌</div>
+    <div class="waiting-title">Waiting for bae<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
+    <p class="waiting-sub">Share your code — they'll join in a moment</p>
+    <div class="room-code-display" style="margin-bottom:1.6rem">
+      <div class="room-code-label">Room Code</div>
+      <div class="room-code-val" id="wait-code">—</div>
+    </div>
+    <button class="btn btn-outline" onclick="copyCode()">📋 Copy Code</button>
+    <br>
+    <button class="btn-ghost" onclick="resetAll()">← Cancel</button>
+  </div>
+
+  <!-- ③ MODE SELECT (host picks) -->
+  <div class="screen" id="s-mode">
+    <div class="section-title">Pick tonight's game</div>
+    <p class="host-note">Only the host can choose the mode</p>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="selectMode('truth-dare', this)">
+        <div class="icon">🎭</div>
+        <span class="name">Truth or Dare</span>
+        <span class="hint">Spill it or do it</span>
+      </div>
+      <div class="mode-card" onclick="selectMode('would-rather', this)">
+        <div class="icon">⚖️</div>
+        <span class="name">Would You Rather</span>
+        <span class="hint">Pick your poison</span>
+      </div>
+      <div class="mode-card" onclick="selectMode('hot-questions', this)">
+        <div class="icon">🔥</div>
+        <span class="name">Hot Questions</span>
+        <span class="hint">Deep & spicy</span>
+      </div>
+      <div class="mode-card" onclick="selectMode('couple-quiz', this)">
+        <div class="icon">🧠</div>
+        <span class="name">Couple Quiz</span>
+        <span class="hint">How well do you know each other?</span>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="start-btn" disabled onclick="startGame()">Start Game 🎲</button>
+    </div>
+  </div>
+
+  <!-- ④ MODE WAIT (guest waits for host to pick) -->
+  <div class="screen" id="s-mode-wait">
+    <div class="waiting-blob">🎮</div>
+    <div class="waiting-title">Waiting for host<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
+    <p class="waiting-sub">They're picking the game mode right now</p>
+  </div>
+
+  <!-- ⑤ GAME -->
+  <div class="screen" id="s-game">
+    <div class="status-bar">
+      <div class="player-score">
+        <div class="pts" id="score-p1">0</div>
+        <div class="name" id="name-p1">Him</div>
+      </div>
+      <div class="card-num" id="card-num">Card 1/10</div>
+      <div class="player-score" style="text-align:right">
+        <div class="pts" id="score-p2">0</div>
+        <div class="name" id="name-p2">Her</div>
+      </div>
+    </div>
+
+    <div class="turn-banner" id="turn-banner">
+      <span class="turn-dot"></span>
+      <span id="turn-text">Loading...</span>
+    </div>
+
+    <div class="card-wrap">
+      <div class="game-card" id="game-card">
+        <span class="badge badge-truth" id="card-badge">Truth</span>
+        <div class="card-text" id="card-body">Ready!</div>
+      </div>
+    </div>
+
+    <!-- Answer Section -->
+    <div class="answer-section" id="answer-section">
+      <textarea class="answer-input" id="my-answer" placeholder="Type your answer here..." rows="2"></textarea>
+      <button class="submit-answer-btn" id="btn-submit-answer" onclick="submitAnswer()">Submit Answer ✓</button>
+      <div class="answer-status" id="answer-status"></div>
+    </div>
+
+    <!-- Reveal Box (shown after both answered) -->
+    <div class="reveal-box" id="reveal-box" style="display:none">
+      <div class="reveal-row">
+        <div class="reveal-avatar">👨🏾</div>
+        <div>
+          <div class="reveal-name" id="rev-name1">Him</div>
+          <div class="reveal-answer" id="rev-ans1"><span class="reveal-pending">waiting...</span></div>
+        </div>
+      </div>
+      <div class="reveal-row">
+        <div class="reveal-avatar">👩🏾</div>
+        <div>
+          <div class="reveal-name" id="rev-name2">Her</div>
+          <div class="reveal-answer" id="rev-ans2"><span class="reveal-pending">waiting...</span></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="observer-notice" id="observer-notice"></p>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-next" onclick="nextCard()" disabled>Next Card 🎲</button>
+      <button class="btn btn-outline" id="btn-point" onclick="givePoint()" disabled>+1 Point ❤️</button>
+    </div>
+    <button class="btn-ghost" onclick="resetAll()">← Leave Game</button>
+  </div>
+
+  <!-- ⑥ RESULT -->
+  <div class="screen" id="s-result">
+    <div class="result-crown" id="res-crown">🏆</div>
+    <div class="result-title" id="res-title">Game Over</div>
+    <p class="result-score" id="res-score"></p>
+    <div class="result-card">
+      <div class="winner-name" id="res-winner"></div>
+      <div class="pts-label" id="res-pts"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-play-again" onclick="playAgain()">Play Again 💫</button>
+      <button class="btn btn-outline" onclick="resetAll()">Leave</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ════════════════════════════════════════════
+//  CARD DATA
+// ════════════════════════════════════════════
+const CARDS = {
+  'truth-dare': [
+    {type:'truth', text:"What's the first thing you noticed about me?"},
+    {type:'dare',  text:"Send your partner a voice note saying something sweet — right now."},
+    {type:'truth', text:"What's something I do that secretly makes you smile?"},
+    {type:'dare',  text:"Serenade your partner with any song for 30 seconds on a voice/video call."},
+    {type:'truth', text:"What's one thing you wish we did more of together?"},
+    {type:'dare',  text:"Let your partner choose your profile picture for a week."},
+    {type:'truth', text:"What's a habit of mine that drives you a little crazy?"},
+    {type:'dare',  text:"Text your partner something you've never said out loud."},
+    {type:'truth', text:"Where do you see us in 5 years?"},
+    {type:'dare',  text:"Do your best impression of your partner on a video call."},
+    {type:'truth', text:"What's the most attractive thing about my personality?"},
+    {type:'truth', text:"Have you ever had a dream about me? What happened?"},
+    {type:'dare',  text:"Promise to cook or order your partner's favourite meal next time you're together."},
+    {type:'truth', text:"What's a memory with me that you replay often?"},
+    {type:'dare',  text:"Show your partner your most embarrassing photo on your phone right now."},
+  ],
+  'would-rather': [
+    {type:'rather', a:"Never fight again but never fully make up", b:"Fight more but always deeply reconcile"},
+    {type:'rather', a:"Know exactly what your partner is thinking at all times", b:"Keep the mystery forever"},
+    {type:'rather', a:"Travel the world together with no money", b:"Be rich but never leave your city"},
+    {type:'rather', a:"Have your partner forget your anniversary every year", b:"You forget theirs every year"},
+    {type:'rather', a:"Be stuck in a lift with your partner for 6 hours", b:"Be apart for 6 hours with no contact"},
+    {type:'rather', a:"Your partner sees all your texts", b:"You see all theirs"},
+    {type:'rather', a:"Grow old looking the same", b:"Stay young-looking but age in health"},
+    {type:'rather', a:"A relationship with zero secrets", b:"Complete personal privacy always"},
+    {type:'rather', a:"Your partner remembers every little thing you say", b:"They always surprise you like they forgot"},
+    {type:'rather', a:"Always know when they're lying", b:"Always know when they're happy"},
+  ],
+  'hot-questions': [
+    {type:'hot', text:"What's something you've never told me but want to?"},
+    {type:'hot', text:"What moment made you feel most loved by me?"},
+    {type:'hot', text:"What's one thing you want more of in this relationship?"},
+    {type:'hot', text:"Is there something I did that hurt you and you never said?"},
+    {type:'hot', text:"What's your love language and do I speak it well?"},
+    {type:'hot', text:"What's one boundary you wish we talked about more openly?"},
+    {type:'hot', text:"What does a perfect day with me look like?"},
+    {type:'hot', text:"Do you think we communicate well? What could be better?"},
+    {type:'hot', text:"What's one thing you admire about how I love you?"},
+    {type:'hot', text:"If you could change one thing about our relationship, what would it be?"},
+    {type:'hot', text:"What's something small I do that means the most to you?"},
+    {type:'hot', text:"What's the most romantic thing you've imagined us doing together?"},
+  ],
+  'couple-quiz': [
+    {type:'quiz', text:"What is my favourite thing to eat on a Sunday?"},
+    {type:'quiz', text:"What song do I always have on repeat right now?"},
+    {type:'quiz', text:"What's my biggest fear?"},
+    {type:'quiz', text:"What movie could I watch over and over?"},
+    {type:'quiz', text:"What do I do when I'm really stressed?"},
+    {type:'quiz', text:"What's something on my bucket list?"},
+    {type:'quiz', text:"What was I doing the day we first met?"},
+    {type:'quiz', text:"What's my favourite way to be shown love?"},
+    {type:'quiz', text:"What childhood memory do I bring up most often?"},
+    {type:'quiz', text:"What's one thing I'm secretly proud of?"},
+    {type:'quiz', text:"If I won ₦1 million tomorrow, what's the first thing I'd buy?"},
+    {type:'quiz', text:"What habit am I always trying to build?"},
+  ]
+};
+
+// ════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════
+let myCode    = '';
+let myName    = '';
+let isHost    = false;
+let roomKey   = '';
+let pollTimer = null;
+let pickedMode = '';
+
+const MAX_CARDS = 10;
+
+// ════════════════════════════════════════════
+//  STORAGE HELPERS  (window.storage API)
+// ════════════════════════════════════════════
+async function storeGet(key) {
+  try { const r = await window.storage.get(key, true); return r ? JSON.parse(r.value) : null; }
+  catch { return null; }
+}
+async function storeSet(key, val) {
+  try { await window.storage.set(key, JSON.stringify(val), true); } catch {}
+}
+async function storeDel(key) {
+  try { await window.storage.delete(key, true); } catch {}
+}
+
+// ════════════════════════════════════════════
+//  UI HELPERS
+// ════════════════════════════════════════════
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+}
+function err(id, msg) { document.getElementById(id).textContent = msg; }
+function clearErr(id) { document.getElementById(id).textContent = ''; }
+function genCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({length:4}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
+}
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+// ════════════════════════════════════════════
+//  TAB SWITCH
+// ════════════════════════════════════════════
+function switchTab(t) {
+  document.getElementById('panel-create').style.display = t==='create' ? 'block' : 'none';
+  document.getElementById('panel-join').style.display   = t==='join'   ? 'block' : 'none';
+  document.getElementById('tab-create').classList.toggle('active', t==='create');
+  document.getElementById('tab-join').classList.toggle('active', t==='join');
+}
+
+// Auto-generate code on load
+window.addEventListener('load', () => {
+  myCode = genCode();
+  document.getElementById('my-code').textContent = myCode;
+});
+
+// ════════════════════════════════════════════
+//  CREATE ROOM
+// ════════════════════════════════════════════
+async function createRoom() {
+  const name = document.getElementById('name-create').value.trim();
+  if (!name) { err('err-create', 'Enter your name first'); return; }
+  clearErr('err-create');
+
+  myName  = name;
+  isHost  = true;
+  roomKey = 'room_' + myCode;
+
+  const room = {
+    code: myCode,
+    host: { name, score: 0 },
+    guest: null,
+    phase: 'waiting',   // waiting | mode-select | playing | result
+    mode: '',
+    deck: [],
+    cardIndex: 0,
+    currentPlayer: 'host',
+    picked: null,       // for Would You Rather
+    answers: { host: null, guest: null },  // per-card answers
+    lastUpdated: Date.now()
+  };
+
+  await storeSet(roomKey, room);
+  document.getElementById('wait-code').textContent = myCode;
+  show('s-waiting');
+  startPoll();
+}
+
+// ════════════════════════════════════════════
+//  JOIN ROOM
+// ════════════════════════════════════════════
+async function joinRoom() {
+  const code = document.getElementById('code-join').value.trim().toUpperCase();
+  const name = document.getElementById('name-join').value.trim();
+  if (!code || code.length < 4) { err('err-join', 'Enter the 4-letter room code'); return; }
+  if (!name) { err('err-join', 'Enter your name first'); return; }
+  clearErr('err-join');
+
+  const key = 'room_' + code;
+  const room = await storeGet(key);
+  if (!room) { err('err-join', 'Room not found. Check the code.'); return; }
+  if (room.guest) { err('err-join', 'Room is already full.'); return; }
+
+  myName  = name;
+  isHost  = false;
+  myCode  = code;
+  roomKey = key;
+
+  room.guest = { name, score: 0 };
+  room.phase = 'mode-select';
+  room.lastUpdated = Date.now();
+  await storeSet(roomKey, room);
+
+  show('s-mode-wait');
+  startPoll();
+}
+
+// ════════════════════════════════════════════
+//  POLLING  (check room every 2s)
+// ════════════════════════════════════════════
+function startPoll() {
+  stopPoll();
+  pollTimer = setInterval(pollRoom, 2000);
+}
+function stopPoll() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = null;
+}
+
+async function pollRoom() {
+  const room = await storeGet(roomKey);
+  if (!room) return;
+
+  // HOST: waiting → guest joined
+  if (isHost && room.phase === 'mode-select' && document.getElementById('s-waiting').classList.contains('active')) {
+    show('s-mode');
+  }
+
+  // GUEST: mode-select → playing
+  if (!isHost && room.phase === 'playing' && !document.getElementById('s-game').classList.contains('active')) {
+    renderGame(room);
+    show('s-game');
+  }
+
+  // BOTH: playing — sync card state
+  if (room.phase === 'playing' && document.getElementById('s-game').classList.contains('active')) {
+    syncGame(room);
+  }
+
+  // BOTH: result
+  if (room.phase === 'result' && !document.getElementById('s-result').classList.contains('active')) {
+    showResult(room);
+  }
+}
+
+// ════════════════════════════════════════════
+//  MODE SELECT  (host only)
+// ════════════════════════════════════════════
+function selectMode(mode, el) {
+  pickedMode = mode;
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('start-btn').disabled = false;
+}
+
+async function startGame() {
+  const room = await storeGet(roomKey);
+  if (!room) return;
+
+  const deck = shuffle(CARDS[pickedMode]).slice(0, MAX_CARDS);
+  room.mode = pickedMode;
+  room.deck = deck;
+  room.cardIndex = 0;
+  room.currentPlayer = 'host';
+  room.phase = 'playing';
+  room.picked = null;
+  room.answers = { host: null, guest: null };
+  room.lastUpdated = Date.now();
+  await storeSet(roomKey, room);
+
+  renderGame(room);
+  show('s-game');
+}
+
+// ════════════════════════════════════════════
+//  RENDER CARD
+// ════════════════════════════════════════════
+function renderGame(room) {
+  const p1name = room.host.name;
+  const p2name = room.guest ? room.guest.name : 'Guest';
+  document.getElementById('name-p1').textContent = p1name;
+  document.getElementById('name-p2').textContent = p2name;
+  document.getElementById('score-p1').textContent = room.host.score;
+  document.getElementById('score-p2').textContent = room.guest ? room.guest.score : 0;
+  document.getElementById('card-num').textContent = `Card ${room.cardIndex+1}/${MAX_CARDS}`;
+
+  const card = room.deck[room.cardIndex];
+  const myTurn = (isHost && room.currentPlayer === 'host') || (!isHost && room.currentPlayer === 'guest');
+  const activePlayerName = room.currentPlayer === 'host' ? p1name : p2name;
+  const isWYR = card.type === 'rather';
+  const isHot = room.mode === 'hot-questions';
+
+  // Turn banner
+  const banner = document.getElementById('turn-banner');
+  if (isHot || isWYR) {
+    banner.innerHTML = isHot ? '💬 Both answer honestly' : '⚖️ Both pick an option';
+    banner.className = 'turn-banner';
+  } else {
+    banner.innerHTML = `<span class="turn-dot"></span><span>${myTurn ? "Your turn!" : activePlayerName + "'s turn"}</span>`;
+    banner.className = 'turn-banner' + (myTurn ? ' your-turn-glow' : '');
+  }
+
+  // Card content
+  const gc = document.getElementById('game-card');
+  gc.classList.remove('animate');
+  void gc.offsetWidth;
+  gc.classList.add('animate');
+
+  const badge = document.getElementById('card-badge');
+  const body  = document.getElementById('card-body');
+
+  if (isWYR) {
+    badge.textContent = 'Would You Rather';
+    badge.className = 'badge badge-rather';
+    const myPick   = isHost ? room.answers?.host : room.answers?.guest;
+    const theirPick = isHost ? room.answers?.guest : room.answers?.host;
+    const bothAnswered = room.answers?.host && room.answers?.guest;
+    // Show picks highlighted if both answered
+    const aClass = bothAnswered ? (room.answers.host==='a'?'picked':'') : (myPick==='a'?'picked':'');
+    const bClass = bothAnswered ? (room.answers.host==='b'?'picked':'') : (myPick==='b'?'picked':'');
+    body.innerHTML = `
+      <div class="rather-wrap">
+        <div class="rather-opt ${aClass}" onclick="pickRather('a')">${card.a}</div>
+        <div class="rather-or">— or —</div>
+        <div class="rather-opt ${bClass}" onclick="pickRather('b')">${card.b}</div>
+      </div>`;
+  } else {
+    const typeMap = {
+      truth: ['badge-truth','Truth'],
+      dare:  ['badge-dare','Dare'],
+      hot:   ['badge-hot','🔥 Hot'],
+      quiz:  ['badge-quiz','🧠 Quiz'],
+    };
+    const [cls, label] = typeMap[card.type] || ['badge-hot','?'];
+    badge.className = `badge ${cls}`;
+    badge.textContent = label;
+    body.innerHTML = '';
+    body.textContent = card.text;
+  }
+
+  // ── ANSWER SECTION ──
+  const answers    = room.answers || { host: null, guest: null };
+  const myAnswer   = isHost ? answers.host : answers.guest;
+  const theirAns   = isHost ? answers.guest : answers.host;
+  const bothAnswered = answers.host !== null && answers.guest !== null;
+  const isDare     = card.type === 'dare';
+
+  const ansSection  = document.getElementById('answer-section');
+  const revealBox   = document.getElementById('reveal-box');
+  const myAnswerEl  = document.getElementById('my-answer');
+  const submitBtn   = document.getElementById('btn-submit-answer');
+  const statusEl    = document.getElementById('answer-status');
+
+  // Dares don't need typed answers
+  if (isDare) {
+    ansSection.style.display = 'none';
+    revealBox.style.display  = 'none';
+  } else if (isWYR) {
+    // WYR uses card options, not text input
+    ansSection.style.display = 'none';
+    // Show reveal once both picked
+    if (bothAnswered) {
+      revealBox.style.display = 'block';
+      const hostPick  = answers.host  === 'a' ? card.a : card.b;
+      const guestPick = answers.guest === 'a' ? card.a : card.b;
+      document.getElementById('rev-name1').textContent = p1name;
+      document.getElementById('rev-name2').textContent = p2name;
+      document.getElementById('rev-ans1').textContent  = hostPick;
+      document.getElementById('rev-ans2').textContent  = guestPick;
+    } else {
+      revealBox.style.display = 'none';
+    }
+  } else {
+    // Text answer mode
+    ansSection.style.display = 'block';
+    if (myAnswer !== null) {
+      // Already submitted — lock field
+      myAnswerEl.value    = myAnswer;
+      myAnswerEl.disabled = true;
+      submitBtn.textContent = '✓ Submitted';
+      submitBtn.classList.add('submitted');
+      submitBtn.disabled  = true;
+    } else {
+      myAnswerEl.disabled = false;
+      submitBtn.disabled  = false;
+      submitBtn.textContent = 'Submit Answer ✓';
+      submitBtn.classList.remove('submitted');
+    }
+
+    if (bothAnswered) {
+      statusEl.textContent = '';
+      revealBox.style.display = 'block';
+      document.getElementById('rev-name1').textContent = p1name;
+      document.getElementById('rev-name2').textContent = p2name;
+      document.getElementById('rev-ans1').textContent  = answers.host  || '—';
+      document.getElementById('rev-ans2').textContent  = answers.guest || '—';
+    } else if (myAnswer !== null) {
+      statusEl.textContent = 'Waiting for ' + (isHost ? p2name : p1name) + ' to answer...';
+      revealBox.style.display = 'none';
+    } else {
+      statusEl.textContent = theirAns !== null ? (isHost ? p2name : p1name) + ' has answered — your turn!' : '';
+      revealBox.style.display = 'none';
+    }
+  }
+
+  // Next button: requires both answered (or dare where no answers needed)
+  const canNext = isDare
+    ? (isHot || myTurn)
+    : bothAnswered && (isHot || myTurn || isWYR);
+
+  document.getElementById('btn-next').disabled  = !canNext;
+  document.getElementById('btn-point').disabled = !bothAnswered && !isDare;
+
+  const obs = document.getElementById('observer-notice');
+  obs.textContent = '';
+}
+
+function syncGame(room) {
+  // Preserve typed-but-not-submitted answer across polls
+  const myAnswerEl = document.getElementById('my-answer');
+  const draft = myAnswerEl && !myAnswerEl.disabled ? myAnswerEl.value : null;
+  renderGame(room);
+  if (draft !== null && myAnswerEl && !myAnswerEl.disabled) myAnswerEl.value = draft;
+}
+
+// ════════════════════════════════════════════
+//  GAME ACTIONS
+// ════════════════════════════════════════════
+async function submitAnswer() {
+  const text = document.getElementById('my-answer').value.trim();
+  if (!text) return;
+  const room = await storeGet(roomKey);
+  if (!room) return;
+  if (!room.answers) room.answers = { host: null, guest: null };
+  if (isHost) room.answers.host  = text;
+  else        room.answers.guest = text;
+  room.lastUpdated = Date.now();
+  await storeSet(roomKey, room);
+  renderGame(room);
+}
+
+async function nextCard() {
+  const room = await storeGet(roomKey);
+  if (!room) return;
+
+  room.cardIndex++;
+  if (room.cardIndex >= MAX_CARDS) {
+    room.phase = 'result';
+    room.lastUpdated = Date.now();
+    await storeSet(roomKey, room);
+    showResult(room);
+    return;
+  }
+
+  // alternate turns
+  if (room.mode !== 'hot-questions') {
+    room.currentPlayer = room.currentPlayer === 'host' ? 'guest' : 'host';
+  }
+  room.picked  = null;
+  room.answers = { host: null, guest: null };
+  room.lastUpdated = Date.now();
+  await storeSet(roomKey, room);
+
+  // Clear local input
+  const el = document.getElementById('my-answer');
+  if (el) { el.value = ''; el.disabled = false; }
+  renderGame(room);
+}
+
+async function givePoint() {
+  const room = await storeGet(roomKey);
+  if (!room) return;
+
+  if (room.currentPlayer === 'host') room.host.score++;
+  else if (room.guest) room.guest.score++;
+  room.lastUpdated = Date.now();
+  await storeSet(roomKey, room);
+  spawnHeart();
+  renderGame(room);
+}
+
+async function pickRather(choice) {
+  const room = await storeGet(roomKey);
+  if (!room) return;
+  if (!room.answers) room.answers = { host: null, guest: null };
+  // Each player stores their own pick in answers
+  if (isHost) room.answers.host  = choice;
+  else        room.answers.guest = choice;
+  room.lastUpdated = Date.now();
+  await storeSet(roomKey, room);
+  renderGame(room);
+}
+
+// ════════════════════════════════════════════
+//  RESULT
+// ════════════════════════════════════════════
+function showResult(room) {
+  stopPoll();
+  const h = room.host.score;
+  const g = room.guest ? room.guest.score : 0;
+  const hn = room.host.name;
+  const gn = room.guest ? room.guest.name : 'Guest';
+
+  document.getElementById('res-score').textContent = `${hn} ${h} – ${g} ${gn}`;
+
+  let crown, winner, pts;
+  if (h > g) { crown='🏆'; winner=hn; pts=`${h} points`; }
+  else if (g > h) { crown='🏆'; winner=gn; pts=`${g} points`; }
+  else { crown='💞'; winner="It's a tie!"; pts=`${h} all`; }
+
+  document.getElementById('res-crown').textContent   = crown;
+  document.getElementById('res-title').textContent   = 'Game Over';
+  document.getElementById('res-winner').textContent  = winner;
+  document.getElementById('res-pts').textContent     = pts;
+
+  // Only host can restart
+  document.getElementById('btn-play-again').disabled = !isHost;
+  show('s-result');
+}
+
+async function playAgain() {
+  if (!isHost) return;
+  pickedMode = '';
+  const room = await storeGet(roomKey);
+  if (!room) return;
+  room.phase = 'mode-select';
+  room.host.score = 0;
+  if (room.guest) room.guest.score = 0;
+  room.answers = { host: null, guest: null };
+  room.lastUpdated = Date.now();
+  await storeSet(roomKey, room);
+  show('s-mode');
+  startPoll();
+}
+
+// ════════════════════════════════════════════
+//  RESET
+// ════════════════════════════════════════════
+async function resetAll() {
+  stopPoll();
+  if (roomKey) await storeDel(roomKey);
+  myCode = genCode();
+  document.getElementById('my-code').textContent = myCode;
+  document.getElementById('name-create').value = '';
+  document.getElementById('name-join').value = '';
+  document.getElementById('code-join').value = '';
+  isHost = false; roomKey = ''; myName = ''; pickedMode = '';
+  switchTab('create');
+  show('s-lobby');
+}
+
+function copyCode() {
+  navigator.clipboard?.writeText(myCode).catch(()=>{});
+  const btn = document.querySelector('#s-waiting .btn-outline');
+  const orig = btn.textContent;
+  btn.textContent = '✓ Copied!';
+  setTimeout(() => btn.textContent = orig, 1500);
+}
+
+function spawnHeart() {
+  const h = document.createElement('div');
+  h.className = 'heart';
+  h.textContent = ['❤️','💕','💖','💗','💓'][Math.floor(Math.random()*5)];
+  h.style.left   = Math.random()*80+10+'vw';
+  h.style.bottom = '100px';
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 2200);
+}
+</script>
+</body>
+</html>
